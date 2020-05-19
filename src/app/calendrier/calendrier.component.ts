@@ -2,8 +2,9 @@ import {
   Component,
   ChangeDetectionStrategy,
   ViewChild,
-  TemplateRef,
 } from '@angular/core';
+import {ContextMenuComponent, ContextMenuModule} from 'ngx-contextmenu';
+
 import {
   startOfDay,
   endOfDay,
@@ -12,16 +13,19 @@ import {
   endOfMonth,
   isSameDay,
   isSameMonth,
-  addHours,
+  addHours, setMinutes, setHours,
 } from 'date-fns';
-import { Subject } from 'rxjs';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDropdown} from '@ng-bootstrap/ng-bootstrap';
+import {Subject, Subscription} from 'rxjs';
 import {
   CalendarEvent,
   CalendarEventAction,
   CalendarEventTimesChangedEvent,
   CalendarView,
+  CalendarDateFormatter,
+  DAYS_OF_WEEK,
 } from 'angular-calendar';
+import { CustomDateFormatter } from './custom-date-formatter.provider';
 
 const colors: any = {
   red: {
@@ -43,20 +47,18 @@ const colors: any = {
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './calendrier.component.html',
   styleUrls: ['./calendrier.component.css'],
+  providers: [
+    {
+      provide: CalendarDateFormatter,
+      useClass: CustomDateFormatter,
+    },
+  ],
 })
+
 export class CalendrierComponent {
-  @ViewChild('modalContent', { static: true }) modalContent: TemplateRef<any>;
 
-  view: CalendarView = CalendarView.Month;
-
-  CalendarView = CalendarView;
-
-  viewDate: Date = new Date();
-
-  modalData: {
-    action: string;
-    event: CalendarEvent;
-  };
+  @ViewChild('basicMenu') public basicMenu: ContextMenuComponent;
+  @ViewChild('dayEventMenu') public dayEventMenu: ContextMenuComponent;
 
   actions: CalendarEventAction[] = [
     {
@@ -75,41 +77,19 @@ export class CalendrierComponent {
       },
     },
   ];
-
-  refresh: Subject<any> = new Subject();
-
   events: CalendarEvent[] = [
     {
-      start: subDays(startOfDay(new Date()), 1),
-      end: addDays(new Date(), 1),
-      title: 'A 3 day event',
-      color: colors.red,
-      actions: this.actions,
-      allDay: true,
-      resizable: {
-        beforeStart: true,
-        afterEnd: true,
-      },
-      draggable: true,
-    },
-    {
-      start: startOfDay(new Date()),
-      title: 'An event with no end date',
+      start: setHours(setMinutes(new Date(), 30), 13),
+      end: setHours(setMinutes(new Date(), 0), 14),
+      title: 'Point sur le stage, non modifiable',
       color: colors.yellow,
       actions: this.actions,
     },
     {
-      start: subDays(endOfMonth(new Date()), 3),
-      end: addDays(endOfMonth(new Date()), 3),
-      title: 'A long event that spans 2 months',
+      start: setHours(setMinutes(new Date(), 15), 14),
+      end: setHours(setMinutes(new Date(), 20), 15),
+      title: 'Evenement déplaçable et redimensionnable',
       color: colors.blue,
-      allDay: true,
-    },
-    {
-      start: addHours(startOfDay(new Date()), 2),
-      end: addHours(new Date(), 2),
-      title: 'A draggable and resizable event',
-      color: colors.yellow,
       actions: this.actions,
       resizable: {
         beforeStart: true,
@@ -119,9 +99,30 @@ export class CalendrierComponent {
     },
   ];
 
-  activeDayIsOpen = true;
+  view: CalendarView = CalendarView.Week;
 
-  constructor(private modal: NgbModal) {}
+  CalendarView = CalendarView;
+
+  viewDate: Date = new Date();
+
+  locale = 'fr';
+
+  weekStartsOn: number = DAYS_OF_WEEK.MONDAY;
+
+  weekendDays: number[] = [DAYS_OF_WEEK.SATURDAY, DAYS_OF_WEEK.SUNDAY];
+
+  modalData: {
+    action: string;
+    event: CalendarEvent;
+  };
+
+  refresh: Subject<any> = new Subject();
+
+  activeDayIsOpen = false;
+
+
+  constructor() { // httpClient pour la récup serveur firebase
+  }
 
   dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }): void {
     if (isSameMonth(date, this.viewDate)) {
@@ -151,7 +152,7 @@ export class CalendrierComponent {
 
   handleEvent(action: string, event: CalendarEvent): void {
     this.modalData = { event, action };
-    this.modal.open(this.modalContent, { size: 'lg' });
+    // this.modal.open(this.modalContent, { size: 'lg' });
   }
 
   addEvent(): void {
@@ -169,6 +170,23 @@ export class CalendrierComponent {
         },
       },
     ];
+  }
+
+  addEventContext(date: Date): void {
+    if (date.getHours() < 8) {
+      date.setHours(date.getHours() + 8);
+    }
+    this.events.push({
+      start: date,
+      title: 'event',
+      color: colors.red,
+      draggable: true,
+      resizable: {
+        beforeStart: true,
+        afterEnd: true,
+      },
+    });
+    this.refresh.next();
   }
 
   deleteEvent(eventToDelete: CalendarEvent) {

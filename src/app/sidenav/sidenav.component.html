@@ -1,0 +1,13 @@
+<mat-sidenav-container class="example-container noselect" autosize>
+  <mat-sidenav class="example-sidenav" mode="side" opened="true">
+
+    <mat-nav-list>
+      <mat-list-item (click)="isExpanded = !isExpanded">
+        <mat-icon mat-list-icon>menu</mat-icon>
+        <p matLine *ngIf="isExpanded">A faire</p>
+      </mat-list-item>
+    </mat-nav-list>
+  </mat-sidenav>
+    <router-outlet></router-outlet>
+</mat-sidenav-container>
+

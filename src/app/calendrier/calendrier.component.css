@@ -1,0 +1,23 @@
+.flexExpand {
+  flex: 1 1 auto;
+}
+.flexSpaceBetween {
+  display: flex;
+  justify-content: space-between;
+  top: 0;
+  background-color: #FFFFFF;
+}
+.topmargin {
+  margin-top: 64px;
+}
+.sticky {
+  position: fixed;
+  z-index: 1000;
+}
+.automargin {
+  margin: auto;
+}
+.topbotmargin {
+  margin-top: 6px;
+  margin-bottom: 6px;
+}
