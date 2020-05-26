@@ -17,21 +17,19 @@ import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatListModule} from '@angular/material/list';
 import {MatIconModule} from '@angular/material/icon';
 import {MatButtonModule} from '@angular/material/button';
-import {RouterModule, Routes} from '@angular/router';
+import {UrlSerializer} from '@angular/router';
 import {AuthGuard} from './services/authguard.service';
 import {AuthService} from './services/auth.service';
 import {HttpClientModule} from '@angular/common/http';
 import { ContextMenuModule } from 'ngx-contextmenu';
 import { ListeActivitesComponent } from './liste-activites/liste-activites.component';
 import { AjoutActiviteComponent } from './ajout-activite/ajout-activite.component';
+import { SimpleRouting } from './modules/Simple-routing';
+import { Serializer } from './modules/Serializer';
+import {CalendarService} from './services/calendar.service';
+import {ColorPickerModule} from 'ngx-color-picker';
 
 registerLocaleData(localeFr);
-
-const routes: Routes = [
-  { path: '', component: CalendrierComponent },
-  { path: 'not-found', component: CalendrierComponent },
-  { path: '**', component: CalendrierComponent }
-];
 
 @NgModule({
   declarations: [
@@ -63,10 +61,14 @@ const routes: Routes = [
     ContextMenuModule.forRoot({
       useBootstrap4: true,
     }),
-    RouterModule,
-    RouterModule.forRoot(routes)
+    SimpleRouting,
+    ColorPickerModule,
   ],
-  providers: [AuthService, AuthGuard],
+  providers: [AuthService, AuthGuard,
+    { provide: UrlSerializer,
+      useClass: Serializer },
+    CalendarService,
+    ],
   bootstrap: [AppComponent]
 })
 

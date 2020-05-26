@@ -1,13 +1,27 @@
-<mat-sidenav-container class="example-container noselect" autosize>
-  <mat-sidenav class="example-sidenav" mode="side" opened="true">
-
-    <mat-nav-list>
-      <mat-list-item (click)="isExpanded = !isExpanded">
-        <mat-icon mat-list-icon>menu</mat-icon>
-        <p matLine *ngIf="isExpanded">A faire</p>
-      </mat-list-item>
+<mat-drawer-container class="example-container mat-typography" autosize>
+  <mat-drawer mode="side" disableClose="true" opened="true" class="noselect sidenav">
+    <div>
+    <mat-nav-list class="liste-icones">
+      <a [routerLink]="[{ outlets: { side: ['list'] } }]">
+        <mat-list-item (click)="checkOpened('list')">
+          <mat-icon mat-list-icon>menu</mat-icon>
+        </mat-list-item>
+      </a>
+      <a [routerLink]="[{ outlets: { side: ['add'] } }]">
+        <mat-list-item (click)="checkOpened('add')">
+          <mat-icon mat-list-icon>add</mat-icon>
+        </mat-list-item>
+      </a>
+      <a [routerLink]="[{ outlets: { side: ['list'] } }]">
+        <mat-list-item (click)="checkOpened('sort')">
+          <mat-icon mat-list-icon>done</mat-icon>
+        </mat-list-item>
+      </a>
     </mat-nav-list>
-  </mat-sidenav>
+    <router-outlet class="routeur-interface" *ngIf="isExpanded" name="side"></router-outlet>
+    </div>
+  </mat-drawer>
+  <div class="example-sidenav-content">
     <router-outlet></router-outlet>
-</mat-sidenav-container>
-
+  </div>
+</mat-drawer-container>

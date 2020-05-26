@@ -1,0 +1,44 @@
+<br>
+<div class="row text-center align-content-center justify-content-center">
+    <form (ngSubmit)="onSubmit(formulaire)" #formulaire="ngForm">
+      <div class="form-group">
+        <label for="nom">
+          Nom :
+        </label>
+        <input type="text" id="nom" name="nom" class="form-control" ngModel required>
+      </div>
+      <div class="form-group">
+        <label for="duree">
+          Durée :
+        </label>
+        <input type="range" id="duree" name="duree" class="custom-range" min="15" max="120" step="15" ngModel>
+        <div *ngIf="formulaire.value.duree as value; else elseBlock">{{value}} min</div>
+        <ng-template #elseBlock>75 min</ng-template>
+      </div>
+      <div class="form-group">
+        <label for="categorie">
+          Catégorie :
+        </label>
+        <select id="categorie" class="custom-select" name="categorie" ngModel required>
+          <option>
+            Révision
+          </option>
+          <option>
+            Temps libre
+          </option>
+          <option>
+            Divers
+          </option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="couleur">
+          Couleur :
+        </label>
+        <input type="button" [(colorPicker)]="color" [style.background]="color" cpOutputFormat="hex"
+               cpAlphaChannel="disabled" id="couleur" class="custom-select" name="couleur" ngModel
+               >
+      </div>
+    <button class="btn btn-primary" [disabled]="formulaire.invalid">Ajouter</button>
+    </form>
+</div>

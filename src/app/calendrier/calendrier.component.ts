@@ -1,46 +1,17 @@
-import {
-  Component,
-  ChangeDetectionStrategy,
-  ViewChild,
-} from '@angular/core';
-import {ContextMenuComponent, ContextMenuModule} from 'ngx-contextmenu';
+import {ChangeDetectionStrategy, Component, OnDestroy, OnInit, ViewChild, } from '@angular/core';
+import {ContextMenuComponent} from 'ngx-contextmenu';
 
+import {isSameDay, isSameMonth, } from 'date-fns';
+import {Subscription} from 'rxjs';
 import {
-  startOfDay,
-  endOfDay,
-  subDays,
-  addDays,
-  endOfMonth,
-  isSameDay,
-  isSameMonth,
-  addHours, setMinutes, setHours,
-} from 'date-fns';
-import { NgbDropdown} from '@ng-bootstrap/ng-bootstrap';
-import {Subject, Subscription} from 'rxjs';
-import {
+  CalendarDateFormatter,
   CalendarEvent,
-  CalendarEventAction,
   CalendarEventTimesChangedEvent,
   CalendarView,
-  CalendarDateFormatter,
   DAYS_OF_WEEK,
 } from 'angular-calendar';
-import { CustomDateFormatter } from './custom-date-formatter.provider';
-
-const colors: any = {
-  red: {
-    primary: '#ad2121',
-    secondary: '#FAE3E3',
-  },
-  blue: {
-    primary: '#1e90ff',
-    secondary: '#D1E8FF',
-  },
-  yellow: {
-    primary: '#e3bc08',
-    secondary: '#FDF1BA',
-  },
-};
+import {CustomDateFormatter} from './custom-date-formatter.provider';
+import {CalendarService} from '../services/calendar.service';
 
 @Component({
   selector: 'app-calendrier',
@@ -55,49 +26,14 @@ const colors: any = {
   ],
 })
 
-export class CalendrierComponent {
+export class CalendrierComponent implements OnInit, OnDestroy {
 
   @ViewChild('basicMenu') public basicMenu: ContextMenuComponent;
   @ViewChild('dayEventMenu') public dayEventMenu: ContextMenuComponent;
 
-  actions: CalendarEventAction[] = [
-    {
-      label: '<i class="fas fa-fw fa-pencil-alt"></i>',
-      a11yLabel: 'Edit',
-      onClick: ({ event }: { event: CalendarEvent }): void => {
-        this.handleEvent('Edited', event);
-      },
-    },
-    {
-      label: '<i class="fas fa-fw fa-trash-alt"></i>',
-      a11yLabel: 'Delete',
-      onClick: ({ event }: { event: CalendarEvent }): void => {
-        this.events = this.events.filter((iEvent) => iEvent !== event);
-        this.handleEvent('Deleted', event);
-      },
-    },
-  ];
-  events: CalendarEvent[] = [
-    {
-      start: setHours(setMinutes(new Date(), 30), 13),
-      end: setHours(setMinutes(new Date(), 0), 14),
-      title: 'Point sur le stage, non modifiable',
-      color: colors.yellow,
-      actions: this.actions,
-    },
-    {
-      start: setHours(setMinutes(new Date(), 15), 14),
-      end: setHours(setMinutes(new Date(), 20), 15),
-      title: 'Evenement déplaçable et redimensionnable',
-      color: colors.blue,
-      actions: this.actions,
-      resizable: {
-        beforeStart: true,
-        afterEnd: true,
-      },
-      draggable: true,
-    },
-  ];
+  eventsSub: Subscription;
+
+  events: any[];
 
   view: CalendarView = CalendarView.Week;
 
@@ -111,17 +47,20 @@ export class CalendrierComponent {
 
   weekendDays: number[] = [DAYS_OF_WEEK.SATURDAY, DAYS_OF_WEEK.SUNDAY];
 
-  modalData: {
-    action: string;
-    event: CalendarEvent;
-  };
-
-  refresh: Subject<any> = new Subject();
+  refresh = this.calendarService.ref;
 
   activeDayIsOpen = false;
 
+  ngOnInit() {
+    this.eventsSub = this.calendarService.eventsSubject.subscribe(
+      (events: any[]) => {
+        this.events = events;
+      }
+    );
+    this.calendarService.emitEventsSubject();
+  }
 
-  constructor() { // httpClient pour la récup serveur firebase
+  constructor(private calendarService: CalendarService) { // httpClient pour la récup serveur firebase
   }
 
   dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }): void {
@@ -137,56 +76,19 @@ export class CalendrierComponent {
                       newStart,
                       newEnd,
                     }: CalendarEventTimesChangedEvent): void {
-    this.events = this.events.map((iEvent) => {
-      if (iEvent === event) {
-        return {
-          ...event,
-          start: newStart,
-          end: newEnd,
-        };
-      }
-      return iEvent;
-    });
-    this.handleEvent('Dropped or resized', event);
+    this.calendarService.eventTimesChanged({allDay: false, type: undefined, event, newStart, newEnd});
   }
 
   handleEvent(action: string, event: CalendarEvent): void {
-    this.modalData = { event, action };
-    // this.modal.open(this.modalContent, { size: 'lg' });
+    this.calendarService.handleEvent(action, event);
   }
 
   addEvent(): void {
-    this.events = [
-      ...this.events,
-      {
-        title: 'New event',
-        start: startOfDay(new Date()),
-        end: endOfDay(new Date()),
-        color: colors.red,
-        draggable: true,
-        resizable: {
-          beforeStart: true,
-          afterEnd: true,
-        },
-      },
-    ];
+    this.calendarService.addEvent();
   }
 
   addEventContext(date: Date): void {
-    if (date.getHours() < 8) {
-      date.setHours(date.getHours() + 8);
-    }
-    this.events.push({
-      start: date,
-      title: 'event',
-      color: colors.red,
-      draggable: true,
-      resizable: {
-        beforeStart: true,
-        afterEnd: true,
-      },
-    });
-    this.refresh.next();
+    this.calendarService.addEventContext(date);
   }
 
   deleteEvent(eventToDelete: CalendarEvent) {
@@ -199,5 +101,9 @@ export class CalendrierComponent {
 
   closeOpenMonthViewDay() {
     this.activeDayIsOpen = false;
+  }
+
+  ngOnDestroy() {
+    this.eventsSub.unsubscribe();
   }
 }

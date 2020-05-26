@@ -1,32 +1,35 @@
 .example-sidenav-content {
-  display: flex;
-  height: 100vh;
   align-items: center;
+  width: 100%;
   justify-content: center;
 }
 
-.example-sidenav {
+.sidenav {
   background-color: #0747A6;
   position: fixed;
 }
-.active{
-  background-color:rgba(9, 30, 66, 0.25);
+
+.active {
+  background-color: rgba(9, 30, 66, 0.25);
 }
 
-.sidenav-item{
-  color: white;
-  font-size:20px;
-}
-
-mat-icon{
+mat-icon {
   color: white;
 }
 
 .noselect {
-  -webkit-touch-callout: none; /* iOS Safari */
-  -webkit-user-select: none; /* Safari */
-  -moz-user-select: none; /* Old versions of Firefox */
-  -ms-user-select: none; /* Internet Explorer/Edge */
-  user-select: none; /* Non-prefixed version, currently
-                                  supported by Chrome, Edge, Opera and Firefox */
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.liste-icones {
+  float: left;
+}
+
+.routeur-interface {
+  float: right;
+  width: 300px;
 }
