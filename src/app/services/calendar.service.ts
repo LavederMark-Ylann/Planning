@@ -4,6 +4,13 @@ import {CalendarEventAction, CalendarEventTimesChangedEvent} from 'angular-calen
 import {endOfDay, setHours, setMinutes, startOfDay} from 'date-fns';
 import {CustomEvents} from '../modules/CustomEvents';
 
+enum Category {
+  Divers = 'Divers',
+  TempsLibre = 'Temps Libre',
+  Cours = 'Cours',
+  Revision = 'Révision',
+}
+
 const colors: any = {
   red: {
     primary: '#ad2121',
@@ -20,7 +27,8 @@ const colors: any = {
 };
 
 @Injectable()
-export class CalendarService {
+export class CalendarService
+{
 
   eventsSubject = new Subject<any[]>();
   ref = new Subject();
@@ -49,7 +57,7 @@ export class CalendarService {
       title: 'Point sur le stage, non modifiable',
       color: colors.yellow,
       actions: this.actions,
-      category: 'Cours'
+      category: Category.Cours
     },
     {
       start: setHours(setMinutes(new Date('2020/05/28 00:00:00'), 0), 14),
@@ -62,9 +70,12 @@ export class CalendarService {
         afterEnd: true,
       },
       draggable: true,
-      category: 'Divers',
+      category: Category.Divers,
     },
-  ];
+  ]; // Tous les évènements
+
+  private filterTerms: string[];
+  private filteredEvents: CustomEvents[]; // Tous les évènements affichés
 
   locale = 'fr';
 
@@ -74,10 +85,11 @@ export class CalendarService {
   };
 
   constructor() {
+    this.sortEvents([]);
   }
 
   emitEventsSubject() {
-    this.eventsSubject.next(this.events.slice());
+    this.eventsSubject.next(this.filteredEvents.slice());
   } // A faire après chaque changement du calendrier
 
   eventTimesChanged({
@@ -111,22 +123,21 @@ export class CalendarService {
         beforeStart: true,
         afterEnd: true,
       },
-      category: 'Divers',
+      category: Category.Divers,
     });
-    this.emitEventsSubject();
-    this.ref.next();
+    this.update();
   }
 
   handleEvent(action: string, event: CustomEvents): void {
     this.modalData = { event, action };
-    this.emitEventsSubject();
+    this.update();
   }
 
   addEvent(): void {
     this.events = [
       ...this.events,
       {
-        title: 'New event',
+        title: 'Nouvel évènement',
         start: startOfDay(new Date()),
         end: endOfDay(new Date()),
         color: colors.red,
@@ -135,15 +146,15 @@ export class CalendarService {
           beforeStart: true,
           afterEnd: true,
         },
-        category: 'Divers',
+        category: Category.Divers,
       },
     ];
-    this.emitEventsSubject();
-    this.ref.next();
+    this.update();
   }
 
   sidenavAddEvent(titre, duree, couleur, categorie): void {
-    const today = setMinutes(new Date(), 0);
+    const checkedCategory = this.checkCategory(categorie);
+    const today = setHours(setMinutes(new Date(), 0), 8);
     this.events = [
       ...this.events,
       {
@@ -156,9 +167,32 @@ export class CalendarService {
           beforeStart: true,
           afterEnd: true,
         },
-        category: categorie,
+        category: checkedCategory,
       },
     ];
+    this.update();
+  }
+
+  checkCategory(categorie) {
+    switch (categorie) {
+      case 'Cours': return Category.Cours;
+      case 'Revision' : return Category.Revision;
+      case 'Temps libre' : return Category.TempsLibre;
+      default : return Category.Divers;
+    }
+  }
+
+  sortEvents(keys: string []) {
+    this.filterTerms = keys;
+    this.filteredEvents = this.events.filter((event: CustomEvents) => {
+      return !keys.some(k => event.category.toLowerCase().includes(k.toLowerCase()));
+    });
+    this.emitEventsSubject();
+    this.ref.next();
+  }
+
+  update() {
+    this.sortEvents(this.filterTerms);
     this.emitEventsSubject();
     this.ref.next();
   }

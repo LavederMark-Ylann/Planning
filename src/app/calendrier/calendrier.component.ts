@@ -12,6 +12,7 @@ import {
 } from 'angular-calendar';
 import {CustomDateFormatter} from './custom-date-formatter.provider';
 import {CalendarService} from '../services/calendar.service';
+import {CustomEvents} from '../modules/CustomEvents';
 
 @Component({
   selector: 'app-calendrier',
@@ -33,7 +34,7 @@ export class CalendrierComponent implements OnInit, OnDestroy {
 
   eventsSub: Subscription;
 
-  events: any[];
+  events: CustomEvents[];
 
   view: CalendarView = CalendarView.Week;
 
@@ -53,8 +54,8 @@ export class CalendrierComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.eventsSub = this.calendarService.eventsSubject.subscribe(
-      (events: any[]) => {
-        this.events = events;
+      (filteredEvents: any[]) => {
+        this.events = filteredEvents;
       }
     );
     this.calendarService.emitEventsSubject();

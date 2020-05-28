@@ -1,7 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {CalendarService} from '../services/calendar.service';
 import {Subscription} from 'rxjs';
-import {newArray} from '@angular/compiler/src/util';
 import {CustomEvents} from '../modules/CustomEvents';
 
 @Component({
@@ -28,14 +27,13 @@ export class ListeActivitesComponent implements OnInit {
       }
     );
     this.calendarService.emitEventsSubject();
-
   }
 
   constructor(private calendarService: CalendarService) {
   }
 
   sortEvents() {
-    const keys = ['title', 'category'];
+    const keys = ['title', 'category']; // Clé primaire
     return this.events.filter(
       (s => o =>
           (k => !s.has(k) && s.add(k))

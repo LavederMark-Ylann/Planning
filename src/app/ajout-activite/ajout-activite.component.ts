@@ -12,7 +12,7 @@ export class AjoutActiviteComponent implements OnInit {
 
   constructor(private calendarService: CalendarService) { }
 
-  public color = '#2889e9';
+  public color = '#2889e9'; // couleur de base du color picker
 
   ngOnInit(): void {
   }
