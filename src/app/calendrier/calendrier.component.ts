@@ -60,7 +60,7 @@ export class CalendrierComponent implements OnInit, OnDestroy {
     this.calendarService.emitEventsSubject();
   }
 
-  constructor(private calendarService: CalendarService) { // httpClient pour la récup serveur firebase
+  constructor(private calendarService: CalendarService) {
   }
 
   dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }): void {

@@ -140,7 +140,7 @@
   </div>
 </ng-template>
 
-<!-- Template de la semaine -->
+<!-- Template du jour -->
 <ng-template
   #dayHourSegmentTemplate
   let-segment="segment"
@@ -163,7 +163,7 @@
   </div>
 </ng-template>
 
-<!-- Template du jour -->
+<!-- Template de la semaine -->
 <ng-template
   #weekViewHourSegment
   let-segment="segment"
@@ -210,7 +210,7 @@
     [events]="events"
     [refresh]="refresh"
     [dayStartHour]="8"
-    [dayEndHour]="24"
+    [dayStartMinute]="0"
     [headerTemplate]="weekHeaderTemplate"
     [hourSegmentTemplate]="weekViewHourSegment"
     [weekStartsOn]="weekStartsOn"
@@ -226,7 +226,7 @@
     [events]="events"
     [refresh]="refresh"
     [dayStartHour]="8"
-    [dayEndHour]="24"
+    [dayStartMinute]="0"
     [hourSegments]="4"
     [hourSegmentTemplate]="dayHourSegmentTemplate"
     (eventClicked)="handleEvent('Clicked', $event.event)"

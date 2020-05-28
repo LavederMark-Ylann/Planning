@@ -44,16 +44,16 @@ export class CalendarService {
   ];
   private events: CustomEvents[] = [
     {
-      start: setHours(setMinutes(new Date(), 30), 13),
-      end: setHours(setMinutes(new Date(), 0), 14),
+      start: new Date('2020/05/29 12:00:00'), /* setHours(setMinutes(new Date(), 30), 13) */
+      end: new Date('2020/05/29 13:00:00'),   /* setHours(setMinutes(new Date(), 0), 14)  */
       title: 'Point sur le stage, non modifiable',
       color: colors.yellow,
       actions: this.actions,
       category: 'Cours'
     },
     {
-      start: setHours(setMinutes(new Date(), 15), 14),
-      end: setHours(setMinutes(new Date(), 20), 15),
+      start: setHours(setMinutes(new Date('2020/05/28 00:00:00'), 0), 14),
+      end: setHours(setMinutes(new Date('2020/05/28 00:00:00'), 30), 15),
       title: 'Evènement déplaçable et redimensionnable',
       color: colors.blue,
       actions: this.actions,
@@ -111,6 +111,7 @@ export class CalendarService {
         beforeStart: true,
         afterEnd: true,
       },
+      category: 'Divers',
     });
     this.emitEventsSubject();
     this.ref.next();
@@ -134,6 +135,7 @@ export class CalendarService {
           beforeStart: true,
           afterEnd: true,
         },
+        category: 'Divers',
       },
     ];
     this.emitEventsSubject();
@@ -141,10 +143,7 @@ export class CalendarService {
   }
 
   sidenavAddEvent(titre, duree, couleur, categorie): void {
-    console.log(couleur);
-    console.log(colors.red);
-    const date = setHours(new Date(), 8);
-    const today = setMinutes(date, 0);
+    const today = setMinutes(new Date(), 0);
     this.events = [
       ...this.events,
       {

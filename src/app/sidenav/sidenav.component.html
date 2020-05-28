@@ -12,13 +12,15 @@
           <mat-icon mat-list-icon>add</mat-icon>
         </mat-list-item>
       </a>
-      <a [routerLink]="[{ outlets: { side: ['list'] } }]">
+      <a [routerLink]="[{ outlets: { side: ['filter'] } }]">
         <mat-list-item (click)="checkOpened('sort')">
           <mat-icon mat-list-icon>done</mat-icon>
         </mat-list-item>
       </a>
     </mat-nav-list>
-    <router-outlet class="routeur-interface" *ngIf="isExpanded" name="side"></router-outlet>
+      <div class="routeur-interface" *ngIf="isExpanded" >
+    <router-outlet name="side"></router-outlet>
+      </div>
     </div>
   </mat-drawer>
   <div class="example-sidenav-content">

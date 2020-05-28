@@ -28,6 +28,7 @@ import { SimpleRouting } from './modules/Simple-routing';
 import { Serializer } from './modules/Serializer';
 import {CalendarService} from './services/calendar.service';
 import {ColorPickerModule} from 'ngx-color-picker';
+import { FiltresActivitesComponent } from './filtres-activites/filtres-activites.component';
 
 registerLocaleData(localeFr);
 
@@ -38,6 +39,7 @@ registerLocaleData(localeFr);
     SidenavComponent,
     ListeActivitesComponent,
     AjoutActiviteComponent,
+    FiltresActivitesComponent,
   ],
   imports: [
     BrowserModule,

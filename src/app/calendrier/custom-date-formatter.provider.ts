@@ -5,25 +5,26 @@ import { Injectable } from '@angular/core';
 @Injectable()
 export class CustomDateFormatter extends CalendarDateFormatter {
 
-  public dayViewHour({ date, locale= 'fr' }: DateFormatterParams): string {
-    return new DatePipe(locale).transform(date, 'HH:mm', locale);
+  public dayViewHour({ date, locale }: DateFormatterParams): string {
+    return date.getHours().toString() + ':00';
+    // return new DatePipe(locale).transform(date, 'HH:mm', locale);
   } // OK
 
-  public weekViewHour({ date, locale= 'fr' }: DateFormatterParams): string {
+  public weekViewHour({ date, locale }: DateFormatterParams): string {
     return this.dayViewHour({ date, locale });
   } // OK
 
-  public monthViewColumnHeader({ date, locale= 'fr' }: DateFormatterParams): string {
+  public monthViewColumnHeader({ date, locale }: DateFormatterParams): string {
     return new DatePipe(locale).transform(date, 'EEE', locale);
   } // OK
 
-  public monthViewTitle({ date, locale = 'fr' }: DateFormatterParams): string {
+  public monthViewTitle({ date, locale }: DateFormatterParams): string {
     return new DatePipe(locale).transform(date, 'MMM y', locale);
   } // OK
 
   public weekViewTitle({
                          date,
-                         locale = 'fr',
+                         locale,
                          weekStartsOn,
                          excludeDays,
                          daysInWeek,
@@ -48,14 +49,10 @@ export class CustomDateFormatter extends CalendarDateFormatter {
 
   public weekViewColumnHeader({ date, locale }: DateFormatterParams): string {
     return new Intl.DateTimeFormat(locale, { weekday: 'long' }).format(date);
-    // return new DatePipe(locale).transform(date, 'EEEE', locale);
-  } // manque une majuscule au début
+    // return new DatePipe(locale).transform(date, 'EEEE', 'GMT', locale);
+  }
 
-  public weekViewColumnSubHeader({date, locale= 'fr', }: DateFormatterParams): string {
-    return new DatePipe(locale).transform(date, 'dd MMM', locale);
-  } // OK
-
-  public dayViewTitle({date, locale= 'fr'}: DateFormatterParams): string {
+  public dayViewTitle({date, locale}: DateFormatterParams): string {
     return new DatePipe(locale).transform(date, 'EEEE dd MMM y', locale);
   } // OK
 }

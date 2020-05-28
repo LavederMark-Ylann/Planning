@@ -32,4 +32,9 @@ mat-icon {
 .routeur-interface {
   float: right;
   width: 300px;
+  max-width: 300px;
+}
+
+mat-drawer {
+  transition: opacity 1s ease-out;
 }
