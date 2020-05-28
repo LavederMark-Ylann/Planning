@@ -1,0 +1,14 @@
+.activite {
+  color: #1e90ff;
+  border-radius: 5px;
+  height: 85px;
+}
+
+#recherche {
+  margin-bottom: 5px;
+}
+
+.searchLabel {
+  margin-left: auto;
+  margin-right: auto;
+}

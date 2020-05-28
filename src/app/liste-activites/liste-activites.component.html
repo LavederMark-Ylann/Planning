@@ -1,0 +1,13 @@
+<div class="container" style="max-width: 300px;
+  margin: auto;">
+  <br>
+  <div class="row">
+    <label for="recherche" class="searchLabel">Filter par nom</label>
+    <input id="recherche" class="form-control" type="text" [(ngModel)]=filterTerm (input)="searchData()">
+      <button class="activite col col-sm-6"  *ngFor="let event of filtered"
+              (click)="sidenavAddEvent(event.title, 120, event.color, event.category)"
+           style="background-color: {{event.color.secondary}}; border: 1px solid {{event.color.primary}};">
+        {{(event.title.length > 35)? (event.title | slice:0:35)+'..':(event.title)}}
+      </button>
+    </div>
+</div>
