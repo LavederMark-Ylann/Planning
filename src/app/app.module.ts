@@ -29,6 +29,7 @@ import { Serializer } from './modules/Serializer';
 import {CalendarService} from './services/calendar.service';
 import {ColorPickerModule} from 'ngx-color-picker';
 import { FiltresActivitesComponent } from './filtres-activites/filtres-activites.component';
+import {CapitalizeFirstLetterPipe} from './modules/CapitalizeFirstLetterPipe';
 
 registerLocaleData(localeFr);
 
@@ -40,6 +41,7 @@ registerLocaleData(localeFr);
     ListeActivitesComponent,
     AjoutActiviteComponent,
     FiltresActivitesComponent,
+    CapitalizeFirstLetterPipe,
   ],
   imports: [
     BrowserModule,

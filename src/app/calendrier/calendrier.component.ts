@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, OnDestroy, OnInit, ViewChild, } from '@angular/core';
+import {ChangeDetectionStrategy, Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
 import {ContextMenuComponent} from 'ngx-contextmenu';
 
 import {isSameDay, isSameMonth, } from 'date-fns';
@@ -17,6 +17,7 @@ import {CustomEvents} from '../modules/CustomEvents';
 @Component({
   selector: 'app-calendrier',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  encapsulation: ViewEncapsulation.None,
   templateUrl: './calendrier.component.html',
   styleUrls: ['./calendrier.component.css'],
   providers: [
@@ -24,6 +25,18 @@ import {CustomEvents} from '../modules/CustomEvents';
       provide: CalendarDateFormatter,
       useClass: CustomDateFormatter,
     },
+  ],
+  styles: [
+    `
+      div:not(.cal-draggable):not(.resize-active) > mwl-calendar-week-view-event > div {
+        background: repeating-linear-gradient(
+          -45deg,
+          #AAA,
+          #AAA 2px,
+          transparent 2px,
+          transparent 12px)
+      }
+    `,
   ],
 })
 

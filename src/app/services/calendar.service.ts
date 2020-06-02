@@ -52,16 +52,16 @@ export class CalendarService
   ];
   private events: CustomEvents[] = [
     {
-      start: new Date('2020/05/29 12:00:00'), /* setHours(setMinutes(new Date(), 30), 13) */
-      end: new Date('2020/05/29 13:00:00'),   /* setHours(setMinutes(new Date(), 0), 14)  */
+      start: new Date('2020/06/05 13:30:00'), /* setHours(setMinutes(new Date(), 30), 13) */
+      end: new Date('2020/06/05 14:30:00'),   /* setHours(setMinutes(new Date(), 0), 14)  */
       title: 'Point sur le stage, non modifiable',
       color: colors.yellow,
       actions: this.actions,
-      category: Category.Cours
+      category: Category.Cours,
     },
     {
-      start: setHours(setMinutes(new Date('2020/05/28 00:00:00'), 0), 14),
-      end: setHours(setMinutes(new Date('2020/05/28 00:00:00'), 30), 15),
+      start: setHours(setMinutes(new Date('2020/06/04 00:00:00'), 0), 14),
+      end: setHours(setMinutes(new Date('2020/06/04 00:00:00'), 30), 15),
       title: 'Evènement déplaçable et redimensionnable',
       color: colors.blue,
       actions: this.actions,
@@ -175,9 +175,10 @@ export class CalendarService
 
   checkCategory(categorie) {
     switch (categorie) {
-      case 'Cours': return Category.Cours;
-      case 'Revision' : return Category.Revision;
-      case 'Temps libre' : return Category.TempsLibre;
+      case 'Cours': case 'cours' : return Category.Cours;
+      case 'Revision' : case 'revision' : case 'révision' : case 'Révisions' :   return Category.Revision;
+      case 'Temps libre' : case 'temps libre' : case 'Temps Libre' : case 'tempsLibre' : case 'TempsLibre' :
+        return Category.TempsLibre;
       default : return Category.Divers;
     }
   }
@@ -196,5 +197,4 @@ export class CalendarService
     this.emitEventsSubject();
     this.ref.next();
   }
-
 }

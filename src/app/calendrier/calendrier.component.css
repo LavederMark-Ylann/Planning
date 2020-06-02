@@ -15,7 +15,7 @@
   z-index: 1000;
 }
 .automargin {
-  margin: auto;
+  margin: auto !important;
 }
 .topbotmargin {
   margin-top: 6px;
