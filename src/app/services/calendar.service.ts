@@ -33,7 +33,10 @@ export class CalendarService
   eventsSubject = new Subject<any[]>();
   ref = new Subject();
 
-  private actions: CalendarEventAction[] = [
+  filtersSelected = [ false, false, false, false ];
+  filtersSelectedSubject = new Subject<any[]>();
+
+  actions: CalendarEventAction[] = [
     {
       label: '<i class="fas fa-fw fa-pencil-alt"></i>',
       a11yLabel: 'Edit',
@@ -50,7 +53,7 @@ export class CalendarService
       },
     },
   ];
-  private events: CustomEvents[] = [
+  events: CustomEvents[] = [
     {
       start: new Date('2020/06/05 13:30:00'), /* setHours(setMinutes(new Date(), 30), 13) */
       end: new Date('2020/06/05 14:30:00'),   /* setHours(setMinutes(new Date(), 0), 14)  */
@@ -74,8 +77,10 @@ export class CalendarService
     },
   ]; // Tous les évènements
 
-  private filterTerms: string[];
-  private filteredEvents: CustomEvents[]; // Tous les évènements affichés
+  filterTerms: string[];
+  filterTermsSubject = new Subject<any[]>();
+
+  filteredEvents: CustomEvents[]; // Tous les évènements affichés
 
   locale = 'fr';
 
@@ -86,6 +91,14 @@ export class CalendarService
 
   constructor() {
     this.sortEvents([]);
+  }
+
+  emitTermsSubject() {
+    this.filterTermsSubject.next(this.filterTerms);
+  }
+
+  emitFiltersSubject() {
+    this.filtersSelectedSubject.next(this.filtersSelected);
   }
 
   emitEventsSubject() {
@@ -196,5 +209,19 @@ export class CalendarService
     this.sortEvents(this.filterTerms);
     this.emitEventsSubject();
     this.ref.next();
+  }
+
+  setFilters(index: number) {
+    this.filtersSelected[index] = !this.filtersSelected[index];
+  }
+
+  setSortingTerm(term: string) {
+    if (this.filterTerms.includes(term)) {
+      this.filterTerms = this.filterTerms.filter(e => e !== term);
+    } else {
+      this.filterTerms.push(term);
+    }
+    this.emitTermsSubject();
+    this.sortEvents(this.filterTerms);
   }
 }

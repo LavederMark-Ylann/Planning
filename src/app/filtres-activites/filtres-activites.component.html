@@ -5,17 +5,17 @@
 <div class="row m-auto">
 
   <div class="col-6">
-    <button class="btn same-width" [ngClass]="{'btn-success': coursSelected == false,
-                                   'btn-danger': coursSelected == true}"
-            (click)="setSortingTerm('Cours'); coursSelected = !coursSelected">
+    <button class="btn same-width" [ngClass]="{'btn-success': this.filtersSelected[0] == false,
+                                   'btn-danger': this.filtersSelected[0] == true}"
+            (click)="setSortingTerm('Cours'); setFilters(0)">
       Cours
     </button>
   </div>
 
   <div class="col-6">
-    <button class="btn same-width" [ngClass]="{'btn-success': revisionSelected == false,
-                                   'btn-danger': revisionSelected == true}"
-            (click)="setSortingTerm('Révision'); revisionSelected = !revisionSelected">
+    <button class="btn same-width" [ngClass]="{'btn-success': this.filtersSelected[1] == false,
+                                   'btn-danger': this.filtersSelected[1] == true}"
+            (click)="setSortingTerm('Révision'); setFilters(1)">
       Révision
     </button>
   </div>
@@ -23,17 +23,17 @@
   <div class=" col-12 divider"></div>
 
   <div class="col-6">
-    <button class="btn same-width" [ngClass]="{'btn-success': tempsLibreSelected == false,
-                                   'btn-danger': tempsLibreSelected == true}"
-            (click)="setSortingTerm('Temps Libre'); tempsLibreSelected = !tempsLibreSelected">
+    <button class="btn same-width" [ngClass]="{'btn-success': this.filtersSelected[2] == false,
+                                   'btn-danger': this.filtersSelected[2] == true}"
+            (click)="setSortingTerm('Temps Libre'); setFilters(2)">
       Temps Libre
     </button>
   </div>
 
   <div class="col-6">
-    <button class="btn same-width" [ngClass]="{'btn-success': diversSelected == false,
-                                   'btn-danger': diversSelected == true}"
-            (click)="setSortingTerm('Divers'); diversSelected = !diversSelected">
+    <button class="btn same-width" [ngClass]="{'btn-success': this.filtersSelected[3] == false,
+                                   'btn-danger': this.filtersSelected[3] == true}"
+            (click)="setSortingTerm('Divers'); setFilters(3)">
       Divers
     </button>
   </div>

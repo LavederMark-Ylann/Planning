@@ -1,37 +1,49 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {CalendarService} from '../services/calendar.service';
+import {Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-filtres-activites',
   templateUrl: './filtres-activites.component.html',
   styleUrls: ['./filtres-activites.component.css']
 })
-export class FiltresActivitesComponent implements OnInit {
+export class FiltresActivitesComponent implements OnInit, OnDestroy {
 
-  categoriesToFilter = [];
-  diversSelected = false;
-  coursSelected = false;
-  tempsLibreSelected = false;
-  revisionSelected = false;
+  termsToFilter = [];
+  termsSub: Subscription;
+  filtersSelected = [];
+  filtersSub: Subscription;
 
-  constructor(private calendarService: CalendarService) {
+  constructor(private calendarService: CalendarService) {}
 
+  ngOnInit() {
+    // Filtres sélectionnés (tab de bool)
+    this.filtersSub = this.calendarService.filtersSelectedSubject.subscribe(
+      (filters: any[]) => {
+        this.filtersSelected = filters;
+      }
+    );
+    this.calendarService.emitFiltersSubject();
+    // Termes à filtrer (tab de string)
+    this.termsSub = this.calendarService.filterTermsSubject.subscribe(
+      (categories: any[]) => {
+        this.termsToFilter = categories;
+      }
+    );
+    this.calendarService.emitFiltersSubject();
   }
 
-  ngOnInit() {}
-
-  setSortingTerm(term) {
-    if (this.categoriesToFilter.includes(term)) {
-      this.categoriesToFilter = this.categoriesToFilter.filter(e => e !== term);
-    }
-    else {
-      this.categoriesToFilter.push(term);
-    }
-    this.sort();
+  setFilters(index: number) {
+    this.calendarService.setFilters(index);
   }
 
-  sort() {
-    this.calendarService.sortEvents(this.categoriesToFilter);
+  setSortingTerm(term: string) {
+    this.calendarService.setSortingTerm(term);
+  }
+
+  ngOnDestroy() {
+    this.termsSub.unsubscribe();
+    this.filtersSub.unsubscribe();
   }
 
 }

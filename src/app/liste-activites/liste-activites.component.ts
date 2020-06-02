@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {CalendarService} from '../services/calendar.service';
 import {Subscription} from 'rxjs';
 import {CustomEvents} from '../modules/CustomEvents';
@@ -8,7 +8,7 @@ import {CustomEvents} from '../modules/CustomEvents';
   templateUrl: './liste-activites.component.html',
   styleUrls: ['./liste-activites.component.css']
 })
-export class ListeActivitesComponent implements OnInit {
+export class ListeActivitesComponent implements OnInit, OnDestroy {
 
   eventsSub: Subscription;
 
@@ -52,5 +52,9 @@ export class ListeActivitesComponent implements OnInit {
 
   sidenavAddEvent(titre, duree, couleur, categorie) {
     this.calendarService.sidenavAddEvent(titre, duree, couleur, categorie);
+  }
+
+  ngOnDestroy() {
+    this.eventsSub.unsubscribe();
   }
 }
