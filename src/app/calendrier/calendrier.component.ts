@@ -13,6 +13,7 @@ import {
 import {CustomDateFormatter} from './custom-date-formatter.provider';
 import {CalendarService} from '../services/calendar.service';
 import {CustomEvents} from '../modules/CustomEvents';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-calendrier',
@@ -28,7 +29,7 @@ import {CustomEvents} from '../modules/CustomEvents';
   ],
   styles: [
     `
-      div:not(.cal-draggable):not(.resize-active) > mwl-calendar-week-view-event > div {
+      div mwl-calendar-week-view-event:only-child > div {
         background: repeating-linear-gradient(
           -45deg,
           #AAA,
@@ -43,7 +44,7 @@ import {CustomEvents} from '../modules/CustomEvents';
 export class CalendrierComponent implements OnInit, OnDestroy {
 
   @ViewChild('basicMenu') public basicMenu: ContextMenuComponent;
-  @ViewChild('dayEventMenu') public dayEventMenu: ContextMenuComponent;
+  @ViewChild('eventMenu') public eventMenu: ContextMenuComponent;
 
   eventsSub: Subscription;
 
@@ -74,7 +75,7 @@ export class CalendrierComponent implements OnInit, OnDestroy {
     this.calendarService.emitEventsSubject();
   }
 
-  constructor(private calendarService: CalendarService) {
+  constructor(private calendarService: CalendarService, private bar: MatSnackBar) {
   }
 
   dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }): void {
@@ -90,10 +91,10 @@ export class CalendrierComponent implements OnInit, OnDestroy {
                       newStart,
                       newEnd,
                     }: CalendarEventTimesChangedEvent): void {
-    this.calendarService.eventTimesChanged({allDay: false, type: undefined, event, newStart, newEnd});
+    this.calendarService.eventTimesChanged({ event, newStart, newEnd});
   }
 
-  handleEvent(action: string, event: CalendarEvent): void {
+  handleEvent(action: string, event): void {
     this.calendarService.handleEvent(action, event);
   }
 
@@ -105,8 +106,13 @@ export class CalendrierComponent implements OnInit, OnDestroy {
     this.calendarService.addEventContext(date);
   }
 
-  deleteEvent(eventToDelete: CalendarEvent) {
-    this.events = this.events.filter((event) => event !== eventToDelete);
+  deleteEvent(eventToDelete) {
+    if (!eventToDelete.event.draggable) {
+      this.snackbar('Impossible de modifier un cours', 'bg-danger');
+    }
+    else {
+      this.calendarService.deleteEvent(eventToDelete);
+    }
   }
 
   setView(view: CalendarView) {
@@ -115,6 +121,15 @@ export class CalendrierComponent implements OnInit, OnDestroy {
 
   closeOpenMonthViewDay() {
     this.activeDayIsOpen = false;
+  }
+
+  snackbar(message: string, classe?: string) {
+    this.bar.open(message, 'X', {
+      panelClass: classe,
+      duration: 1500,
+      horizontalPosition: 'end',
+      verticalPosition: 'top',
+    });
   }
 
   ngOnDestroy() {

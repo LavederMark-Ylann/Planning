@@ -1,6 +1,5 @@
-import { Subject} from 'rxjs';
-import { Injectable } from '@angular/core';
-import {CalendarEventAction, CalendarEventTimesChangedEvent} from 'angular-calendar';
+import {Subject} from 'rxjs';
+import {Injectable} from '@angular/core';
 import {endOfDay, setHours, setMinutes, startOfDay} from 'date-fns';
 import {CustomEvents} from '../modules/CustomEvents';
 
@@ -27,47 +26,46 @@ const colors: any = {
 };
 
 @Injectable()
-export class CalendarService
-{
+export class CalendarService {
 
   eventsSubject = new Subject<any[]>();
   ref = new Subject();
 
-  filtersSelected = [ false, false, false, false ];
+  filtersSelected = [false, false, false, false];
   filtersSelectedSubject = new Subject<any[]>();
 
-  actions: CalendarEventAction[] = [
+  /* actions: CalendarEventAction[] = [
     {
       label: '<i class="fas fa-fw fa-pencil-alt"></i>',
       a11yLabel: 'Edit',
-      onClick: ({ event }: { event: CustomEvents }): void => {
+      onClick: ({event}: { event: CustomEvents }): void => {
         this.handleEvent('Edited', event);
       },
     },
     {
       label: '<i class="fas fa-fw fa-trash-alt"></i>',
       a11yLabel: 'Delete',
-      onClick: ({ event }: { event: CustomEvents }): void => {
+      onClick: ({event}: { event: CustomEvents }): void => {
         this.events = this.events.filter((iEvent) => iEvent !== event);
         this.handleEvent('Deleted', event);
       },
     },
-  ];
+  ]; */
   events: CustomEvents[] = [
     {
+      identifiant: 1,
       start: new Date('2020/06/05 13:30:00'), /* setHours(setMinutes(new Date(), 30), 13) */
       end: new Date('2020/06/05 14:30:00'),   /* setHours(setMinutes(new Date(), 0), 14)  */
       title: 'Point sur le stage, non modifiable',
       color: colors.yellow,
-      actions: this.actions,
       category: Category.Cours,
     },
     {
-      start: setHours(setMinutes(new Date('2020/06/04 00:00:00'), 0), 14),
-      end: setHours(setMinutes(new Date('2020/06/04 00:00:00'), 30), 15),
+      identifiant: 2,
+      start: setHours(setMinutes(new Date('2020/06/03 00:00:00'), 0), 14),
+      end: setHours(setMinutes(new Date('2020/06/03 00:00:00'), 30), 15),
       title: 'Evènement déplaçable et redimensionnable',
       color: colors.blue,
-      actions: this.actions,
       resizable: {
         beforeStart: true,
         afterEnd: true,
@@ -105,11 +103,7 @@ export class CalendarService
     this.eventsSubject.next(this.filteredEvents.slice());
   } // A faire après chaque changement du calendrier
 
-  eventTimesChanged({
-                      event,
-                      newStart,
-                      newEnd,
-                    }: CalendarEventTimesChangedEvent): void {
+  eventTimesChanged({ event, newStart, newEnd }) {
     this.events = this.events.map((iEvent) => {
       if (iEvent === event) {
         return {
@@ -128,7 +122,9 @@ export class CalendarService
       date.setHours(8);
     }
     this.events.push({
+      identifiant: Math.max.apply(Math, this.events.map((o) => o.identifiant + 1)),
       start: date,
+      end: setHours(date, date.getHours() + 1 ),
       title: 'Nouvel évènement',
       color: colors.red,
       draggable: true,
@@ -141,8 +137,8 @@ export class CalendarService
     this.update();
   }
 
-  handleEvent(action: string, event: CustomEvents): void {
-    this.modalData = { event, action };
+  handleEvent(action: string, event: CustomEvents) {
+    this.modalData = {event, action};
     this.update();
   }
 
@@ -150,6 +146,7 @@ export class CalendarService
     this.events = [
       ...this.events,
       {
+        identifiant: Math.max.apply(Math, this.events.map((o) => o.identifiant + 1)),
         title: 'Nouvel évènement',
         start: startOfDay(new Date()),
         end: endOfDay(new Date()),
@@ -165,12 +162,18 @@ export class CalendarService
     this.update();
   }
 
+  deleteEvent(eventToDelete) {
+    this.events = this.events.filter((event) => event.identifiant !== eventToDelete.event.identifiant);
+    this.update();
+  }
+
   sidenavAddEvent(titre, duree, couleur, categorie): void {
     const checkedCategory = this.checkCategory(categorie);
     const today = setHours(setMinutes(new Date(), 0), 8);
     this.events = [
       ...this.events,
       {
+        identifiant: Math.max.apply(Math, this.events.map((o) => o.identifiant + 1)),
         title: titre,
         start: today,
         end: setMinutes(today, duree),
@@ -188,11 +191,22 @@ export class CalendarService
 
   checkCategory(categorie) {
     switch (categorie) {
-      case 'Cours': case 'cours' : return Category.Cours;
-      case 'Revision' : case 'revision' : case 'révision' : case 'Révisions' :   return Category.Revision;
-      case 'Temps libre' : case 'temps libre' : case 'Temps Libre' : case 'tempsLibre' : case 'TempsLibre' :
+      case 'Cours':
+      case 'cours' :
+        return Category.Cours;
+      case 'Revision' :
+      case 'revision' :
+      case 'révision' :
+      case 'Révision' :
+        return Category.Revision;
+      case 'Temps libre' :
+      case 'temps libre' :
+      case 'Temps Libre' :
+      case 'tempslibre' :
+      case 'TempsLibre' :
         return Category.TempsLibre;
-      default : return Category.Divers;
+      default :
+        return Category.Divers;
     }
   }
 

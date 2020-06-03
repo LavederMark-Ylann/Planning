@@ -30,6 +30,7 @@ import {CalendarService} from './services/calendar.service';
 import {ColorPickerModule} from 'ngx-color-picker';
 import { FiltresActivitesComponent } from './filtres-activites/filtres-activites.component';
 import {CapitalizeFirstLetterPipe} from './modules/CapitalizeFirstLetterPipe';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 registerLocaleData(localeFr);
 
@@ -42,6 +43,7 @@ registerLocaleData(localeFr);
     AjoutActiviteComponent,
     FiltresActivitesComponent,
     CapitalizeFirstLetterPipe,
+
   ],
   imports: [
     BrowserModule,
@@ -72,6 +74,7 @@ registerLocaleData(localeFr);
     { provide: UrlSerializer,
       useClass: Serializer },
     CalendarService,
+    MatSnackBar,
     ],
   bootstrap: [AppComponent]
 })

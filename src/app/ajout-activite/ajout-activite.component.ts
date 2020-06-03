@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {NgForm} from '@angular/forms';
 import { CalendarService } from '../services/calendar.service';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-ajout-activite',
@@ -10,7 +11,7 @@ import { CalendarService } from '../services/calendar.service';
 
 export class AjoutActiviteComponent implements OnInit {
 
-  constructor(private calendarService: CalendarService) { }
+  constructor(private calendarService: CalendarService, private bar: MatSnackBar) { }
 
   public color = '#2889e9'; // couleur de base du color picker
 
@@ -32,6 +33,14 @@ export class AjoutActiviteComponent implements OnInit {
         ('0' + Math.min(255, Math.max(0, parseInt(color, 16) + 50))
           .toString(16)).substr(-2));
     return {primary: couleur, secondary: sec.toUpperCase()};
+  }
+
+  snackbar() {
+    this.bar.open('Activité ajoutée !', 'X', {
+      duration: 1500,
+      horizontalPosition: 'start',
+      verticalPosition: 'bottom',
+    });
   }
 
 }

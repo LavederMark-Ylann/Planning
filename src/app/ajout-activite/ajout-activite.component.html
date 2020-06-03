@@ -1,5 +1,5 @@
 <br>
-<div class="row text-center align-content-center justify-content-center">
+<div class="row text-center align-content-center justify-content-center m-auto">
     <form (ngSubmit)="onSubmit(formulaire)" #formulaire="ngForm">
       <div class="form-group">
         <label for="nom">
@@ -39,6 +39,6 @@
                cpAlphaChannel="disabled" id="couleur" class="custom-select" name="couleur" ngModel
                >
       </div>
-    <button class="btn btn-primary" [disabled]="formulaire.invalid">Ajouter</button>
+    <button class="btn btn-primary" [disabled]="formulaire.invalid" (click)="snackbar()">Ajouter</button>
     </form>
 </div>
