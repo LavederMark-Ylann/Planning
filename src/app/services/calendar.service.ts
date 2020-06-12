@@ -2,6 +2,8 @@ import {Subject} from 'rxjs';
 import {Injectable} from '@angular/core';
 import {endOfDay, setHours, setMinutes, startOfDay} from 'date-fns';
 import {CustomEvents} from '../modules/CustomEvents';
+import {HttpClient} from '@angular/common/http';
+import * as firebase from 'firebase';
 
 enum Category {
   Divers = 'Divers',
@@ -34,46 +36,7 @@ export class CalendarService {
   filtersSelected = [false, false, false, false];
   filtersSelectedSubject = new Subject<any[]>();
 
-  /* actions: CalendarEventAction[] = [
-    {
-      label: '<i class="fas fa-fw fa-pencil-alt"></i>',
-      a11yLabel: 'Edit',
-      onClick: ({event}: { event: CustomEvents }): void => {
-        this.handleEvent('Edited', event);
-      },
-    },
-    {
-      label: '<i class="fas fa-fw fa-trash-alt"></i>',
-      a11yLabel: 'Delete',
-      onClick: ({event}: { event: CustomEvents }): void => {
-        this.events = this.events.filter((iEvent) => iEvent !== event);
-        this.handleEvent('Deleted', event);
-      },
-    },
-  ]; */
-  events: CustomEvents[] = [
-    {
-      identifiant: 1,
-      start: new Date('2020/06/05 13:30:00'), /* setHours(setMinutes(new Date(), 30), 13) */
-      end: new Date('2020/06/05 14:30:00'),   /* setHours(setMinutes(new Date(), 0), 14)  */
-      title: 'Point sur le stage, non modifiable',
-      color: colors.yellow,
-      category: Category.Cours,
-    },
-    {
-      identifiant: 2,
-      start: setHours(setMinutes(new Date('2020/06/03 00:00:00'), 0), 14),
-      end: setHours(setMinutes(new Date('2020/06/03 00:00:00'), 30), 15),
-      title: 'Evènement déplaçable et redimensionnable',
-      color: colors.blue,
-      resizable: {
-        beforeStart: true,
-        afterEnd: true,
-      },
-      draggable: true,
-      category: Category.Divers,
-    },
-  ]; // Tous les évènements
+  events: CustomEvents[] = []; // Tous les évènements
 
   filterTerms: string[];
   filterTermsSubject = new Subject<any[]>();
@@ -87,8 +50,10 @@ export class CalendarService {
     event: CustomEvents;
   };
 
-  constructor() {
-    this.sortEvents([]);
+  constructor(private httpClient: HttpClient) {
+    this.events = [];
+    // this.getCours();
+    this.getEventsPerso();
   }
 
   emitTermsSubject() {
@@ -103,7 +68,7 @@ export class CalendarService {
     this.eventsSubject.next(this.filteredEvents.slice());
   } // A faire après chaque changement du calendrier
 
-  eventTimesChanged({ event, newStart, newEnd }) {
+  eventTimesChanged({event, newStart, newEnd}) {
     this.events = this.events.map((iEvent) => {
       if (iEvent === event) {
         return {
@@ -118,13 +83,10 @@ export class CalendarService {
   }
 
   addEventContext(date: Date): void {
-    if (date.getHours() < 8) {
-      date.setHours(8);
-    }
     this.events.push({
-      identifiant: Math.max.apply(Math, this.events.map((o) => o.identifiant + 1)),
+      identifiant: Math.max(Math.max.apply(Math, this.events.map((o) => o.identifiant + 1)), 0),
       start: date,
-      end: setHours(date, date.getHours() + 1 ),
+      end: setHours(date, date.getHours() + 1),
       title: 'Nouvel évènement',
       color: colors.red,
       draggable: true,
@@ -162,6 +124,19 @@ export class CalendarService {
     this.update();
   }
 
+  newEvent(data) {
+    return {
+      identifiant: data.identifiant,
+      title: data.title,
+      start: new Date(data.start),
+      end: new Date(data.end),
+      color: data.color,
+      draggable: data.draggable,
+      resizable: data.resizable,
+      category: data.category,
+    };
+  }
+
   deleteEvent(eventToDelete) {
     this.events = this.events.filter((event) => event.identifiant !== eventToDelete.event.identifiant);
     this.update();
@@ -169,7 +144,7 @@ export class CalendarService {
 
   sidenavAddEvent(titre, duree, couleur, categorie): void {
     const checkedCategory = this.checkCategory(categorie);
-    const today = setHours(setMinutes(new Date(), 0), 8);
+    const today = setMinutes(new Date(), 0);
     this.events = [
       ...this.events,
       {
@@ -192,8 +167,7 @@ export class CalendarService {
   checkCategory(categorie) {
     switch (categorie) {
       case 'Cours':
-      case 'cours' :
-        return Category.Cours;
+      case 'cours' : /* Les élèves ne peuvent pas rajouter de cours, uniquement des révisions */
       case 'Revision' :
       case 'revision' :
       case 'révision' :
@@ -237,5 +211,84 @@ export class CalendarService {
     }
     this.emitTermsSubject();
     this.sortEvents(this.filterTerms);
+  }
+
+  getEventsPerso() {
+    firebase.auth().onAuthStateChanged((u) => {
+      if (u) {
+        firebase.database().ref('PlanningPerso').child(u.uid).once('value').then((snapshot) => {
+          snapshot.forEach((item) => {
+            console.log('get');
+            this.events.push(this.newEvent(item.val()));
+          });
+          this.sortEvents([]);
+          this.ref.next();
+        });
+      }
+    });
+  }
+
+  getCours() {
+    firebase.auth().onAuthStateChanged((u) => {
+      if (u) {
+        firebase.database().ref('Cours').once('value').then((snapshot) => {
+          snapshot.forEach((item) => {
+            this.events.push(this.newEvent(item.val()));
+          });
+          this.sortEvents([]);
+          this.ref.next();
+        });
+      }
+    });
+  }
+
+  saveEvents() {
+    const toSave = this.sortDataToSend([Category.Revision, Category.TempsLibre, Category.Divers]);
+    // On envoie tout sauf les cours
+    firebase.auth().onAuthStateChanged((u) => {
+      console.log(u.uid);
+      if (u) {
+        firebase.database().ref('PlanningPerso').child(u.uid).set(toSave).then(() => {
+          // Snackbar
+          console.log('Sauvegardé!');
+        });
+      }
+    });
+  }
+
+  sortDataToSend(keys: string[]) {
+    const array = this.events.filter((event: CustomEvents) => {
+      return keys.some(k => event.category.toLowerCase().includes(k.toLowerCase()));
+    });
+    const ret = [];
+    for (const event of array) {
+      ret.push(
+        {
+          identifiant: event.identifiant,
+          title: event.title,
+          start: event.start.toString(),
+          end: event.end.toString(),
+          color: event.color,
+          draggable: event.draggable,
+          resizable: event.resizable,
+          category: event.category,
+        }
+      );
+    }
+    return ret;
+  }
+
+  saveCours() {
+    this.httpClient
+      .put('https://emploi-du-temps-a6bb9.firebaseio.com/Cours/cours.json',
+        this.sortEvents([Category.Divers, Category.TempsLibre, Category.Revision]))
+      .subscribe(
+        () => {
+          console.log('Sauvegarde réussie');
+        },
+        (error) => {
+          console.log('Erreur :' + error);
+        }
+      );
   }
 }

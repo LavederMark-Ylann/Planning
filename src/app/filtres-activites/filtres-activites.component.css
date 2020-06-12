@@ -6,3 +6,43 @@
   margin-top: 5px;
   margin-bottom: 5px;
 }
+
+.vert {
+  background-color: #21CF2B;
+  border-color: #21CF2B;
+}
+
+.vert-estompe {
+  background-color: #B4E7B7;
+  border-color: #B4E7B7;
+}
+
+.bleu {
+  background-color: #3286C8;
+  border-color: #3286C8;
+}
+
+.bleu-estompe {
+  background-color: #9CBFDC;
+  border-color: #9CBFDC;
+}
+
+.violet {
+  background-color: #992FF1;
+  border-color: #992FF1;
+}
+
+.violet-estompe {
+  background-color: #CEA2F2;
+  border-color: #CEA2F2;
+}
+
+.orange {
+  background-color: #F99122;
+  border-color: #F99122;
+}
+
+.orange-estompe {
+  background-color: #F0C9A0;
+  border-color: #F0C9A0;
+}

@@ -1,0 +1,17 @@
+.fullh {
+  height: 100vh!important;
+  max-width: 35%;
+}
+
+.formulaire {
+  height: auto;
+  border: dodgerblue 1px solid;
+  border-radius: 10px;
+  vertical-align: center;
+  position: relative;
+  top: 5%;
+  padding: 2% 0 2% 0;
+}
+app-connexion {
+  background-color: white;
+}

@@ -1,10 +1,16 @@
 <mat-drawer-container class="example-container mat-typography" autosize>
-  <mat-drawer mode="side" disableClose="true" opened="true" class="noselect sidenav">
+  <mat-drawer mode="side" disableClose="true" opened="true" class="noselect sidenav"
+  [ngClass]="this.getUrl() === '/login' ? 'd-none' : ''" >
     <div>
     <mat-nav-list class="liste-icones">
       <a [routerLink]="[{ outlets: { side: ['list'] } }]">
-        <mat-list-item (click)="checkOpened('list')">
+        <mat-list-item (click)="isExpanded = !isExpanded">
           <mat-icon mat-list-icon>menu</mat-icon>
+        </mat-list-item>
+      </a>
+      <a [routerLink]="[{ outlets: { side: ['list'] } }]">
+        <mat-list-item (click)="checkOpened('list')">
+          <mat-icon mat-list-icon>folder_open</mat-icon>
         </mat-list-item>
       </a>
       <a [routerLink]="[{ outlets: { side: ['add'] } }]">
@@ -14,7 +20,7 @@
       </a>
       <a [routerLink]="[{ outlets: { side: ['filter'] } }]">
         <mat-list-item (click)="checkOpened('sort')">
-          <mat-icon mat-list-icon>done</mat-icon>
+          <mat-icon mat-list-icon class="material-icons">sort</mat-icon>
         </mat-list-item>
       </a>
     </mat-nav-list>

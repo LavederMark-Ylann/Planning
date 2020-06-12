@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
+import {ChangeDetectionStrategy, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {ContextMenuComponent} from 'ngx-contextmenu';
 
 import {isSameDay, isSameMonth, } from 'date-fns';
@@ -18,7 +18,6 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 @Component({
   selector: 'app-calendrier',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  encapsulation: ViewEncapsulation.None,
   templateUrl: './calendrier.component.html',
   styleUrls: ['./calendrier.component.css'],
   providers: [
@@ -26,18 +25,6 @@ import {MatSnackBar} from '@angular/material/snack-bar';
       provide: CalendarDateFormatter,
       useClass: CustomDateFormatter,
     },
-  ],
-  styles: [
-    `
-      div mwl-calendar-week-view-event:only-child > div {
-        background: repeating-linear-gradient(
-          -45deg,
-          #AAA,
-          #AAA 2px,
-          transparent 2px,
-          transparent 12px)
-      }
-    `,
   ],
 })
 
@@ -72,7 +59,6 @@ export class CalendrierComponent implements OnInit, OnDestroy {
         this.events = filteredEvents;
       }
     );
-    this.calendarService.emitEventsSubject();
   }
 
   constructor(private calendarService: CalendarService, private bar: MatSnackBar) {
@@ -130,6 +116,11 @@ export class CalendrierComponent implements OnInit, OnDestroy {
       horizontalPosition: 'end',
       verticalPosition: 'top',
     });
+  }
+
+  save() {
+    this.calendarService.saveEvents();
+    this.snackbar('Sauvegardé !', 'bg-success');
   }
 
   ngOnDestroy() {

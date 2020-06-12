@@ -15,6 +15,8 @@ export class AjoutActiviteComponent implements OnInit {
 
   public color = '#2889e9'; // couleur de base du color picker
 
+  math = Math; // Fonctions de calcul pour le front
+
   ngOnInit(): void {
   }
 
@@ -37,6 +39,7 @@ export class AjoutActiviteComponent implements OnInit {
 
   snackbar() {
     this.bar.open('Activité ajoutée !', 'X', {
+      panelClass: 'bg-success',
       duration: 1500,
       horizontalPosition: 'start',
       verticalPosition: 'bottom',

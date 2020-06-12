@@ -15,9 +15,10 @@
         <
       </div>
       <div
-        class="btn btn-outline-secondary"
+        class="btn btn-outline-dark"
         mwlCalendarToday
         [(viewDate)]="viewDate"
+        matTooltip="Revenir à aujourd'hui"
       >
         Aujourd'hui
       </div>
@@ -59,25 +60,20 @@
     </div>
   </div> <!-- Selection de la vue -->
   <span class="flexExpand"></span>
-  <button class="btn btn-primary topbotmargin" (click)="snackbar('Sauvegardé !', 'bg-success')">Sauvegarder</button>
+  <button class="btn btn-primary topbotmargin" (click)="save()">Sauvegarder</button>
   <span class="flexExpand"></span>
 </div>
 
 <!-- Templates et vues -->
-
 <!-- Menus contextuels -->
 <context-menu #basicMenu>
   <ng-template contextMenuItem (execute)="addEventContext($event.item)">
     Ajouter
   </ng-template>
 </context-menu>
-
 <context-menu #eventMenu>
   <ng-template contextMenuItem (execute)="deleteEvent($event.item)">
     Supprimer
-  </ng-template>
-  <ng-template contextMenuItem (execute)="deleteEvent($event.item)">
-    Modifier
   </ng-template>
 </context-menu>
 
@@ -161,20 +157,20 @@
   </div>
 </ng-template>
 
-<!-- Template event semaine -->
+<!-- Template event semaine & jour -->
 <ng-template #eventTemplate
              let-weekEvent="weekEvent"
              let-locale="locale"
              let-eventClicked="eventClicked"
              let-tooltipPlacement="tooltipPlacement">
   <div class="cal-event" (mwlClick)="eventClicked.emit({ event: weekEvent.event })"
+       [ngClass]="{'hachures': weekEvent.event.draggable === undefined || weekEvent.event.draggable === false}"
        [style.backgroundColor]="weekEvent.event.color.secondary"
        [style.borderColor]="weekEvent.event.color.primary"
        [mwlCalendarTooltip]="weekEvent.event.title | calendarEventTitle:'dayTooltip':weekEvent.event"
        [contextMenu]="eventMenu"
        [contextMenuSubject]="weekEvent"
   >
-
     {{ weekEvent.event.title }}
   </div>
 </ng-template>
@@ -185,7 +181,6 @@
   let-segment="segment"
   let-locale="locale"
   let-segmentHeight="segmentHeight"
-  let-dayStartHour="8"
 >
   <div
     class="cal-hour-segment"
@@ -226,7 +221,6 @@
     [viewDate]="viewDate"
     [events]="events"
     [refresh]="refresh"
-    [dayStartHour]="8"
     [headerTemplate]="weekHeaderTemplate"
     [hourSegmentTemplate]="weekViewHourSegment"
     [weekStartsOn]="weekStartsOn"
@@ -242,7 +236,6 @@
     [viewDate]="viewDate"
     [events]="events"
     [refresh]="refresh"
-    [dayStartHour]="8"
     [hourSegments]="4"
     [hourSegmentTemplate]="dayHourSegmentTemplate"
     (eventClicked)="handleEvent('Clicked', $event.event)"

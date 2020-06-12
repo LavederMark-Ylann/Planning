@@ -12,8 +12,12 @@
           Durée :
         </label>
         <input type="range" id="duree" name="duree" class="custom-range" min="15" max="120" step="15" ngModel>
-        <p *ngIf="formulaire.value.duree as value; else elseBlock">{{value}} min</p>
-        <ng-template #elseBlock>75 min</ng-template>
+        <p [ngClass]="!formulaire.value.duree ? 'd-none' : ''"
+          *ngIf="formulaire.value.duree as value">{{value}} min
+          <span *ngIf="value > 60">({{math.floor(value/60) | number: '1.0-0'}}h<span *ngIf="value%60 !== 0">{{value%60}}</span>)
+          </span>
+        </p>
+        <p [ngClass]="!formulaire.value.duree ? '' : 'd-none'">75 min (1h15)</p>
       </div>
       <div class="form-group">
         <label for="categorie">

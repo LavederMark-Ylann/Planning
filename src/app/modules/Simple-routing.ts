@@ -4,13 +4,15 @@ import { NgModule } from '@angular/core';
 import {ListeActivitesComponent} from '../liste-activites/liste-activites.component';
 import {AjoutActiviteComponent} from '../ajout-activite/ajout-activite.component';
 import {FiltresActivitesComponent} from '../filtres-activites/filtres-activites.component';
+import {ConnexionComponent} from '../connexion/connexion.component';
+import {AuthGuard} from '../services/authguard.service';
 
 const routes: Routes = [
-  {path: '', component: CalendrierComponent},
-  {path: 'cal', redirectTo: ''},
-  {path: 'list', component: ListeActivitesComponent, outlet: 'side'},
-  {path: 'add', component: AjoutActiviteComponent, outlet: 'side'},
-  {path: 'filter', component: FiltresActivitesComponent, outlet: 'side'},
+  {path: '', component: CalendrierComponent, canActivate: [AuthGuard]},
+  {path: 'list', component: ListeActivitesComponent, outlet: 'side', canActivate: [AuthGuard]},
+  {path: 'add', component: AjoutActiviteComponent, outlet: 'side', canActivate: [AuthGuard]},
+  {path: 'filter', component: FiltresActivitesComponent, outlet: 'side', canActivate: [AuthGuard]},
+  {path: 'login', component: ConnexionComponent},
 ];
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
@@ -20,12 +22,3 @@ const routes: Routes = [
 export class SimpleRouting {
 
 }
-/*
-const routes: Routes = [
-  {path: '', redirectTo: '/cal', pathMatch: 'full'},
-  {path: 'cal', component: CalendrierComponent},
-  {path: 'list', component: ListeActivitesComponent, outlet: 'side'},
-  {path: 'add', component: AjoutActiviteComponent, outlet: 'side'},
-  {path: 'filter', component: FiltresActivitesComponent, outlet: 'side'},
-];
- */

@@ -1,4 +1,5 @@
 import {Component, OnInit} from '@angular/core';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-sidenav',
@@ -6,10 +7,11 @@ import {Component, OnInit} from '@angular/core';
   styleUrls: ['./sidenav.component.css']
 })
 export class SidenavComponent implements OnInit {
+
+  constructor(private router: Router) {}
+
   isExpanded = false;
   opened = 'none';
-
-  constructor() { }
 
   ngOnInit(): void {
   }
@@ -28,6 +30,10 @@ export class SidenavComponent implements OnInit {
         this.opened = name;
       }
     }
+  }
+
+  getUrl() {
+    return this.router.url.split('?')[0];
   }
 
 }

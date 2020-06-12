@@ -1,20 +1,20 @@
 <br>
 
-<h4 class="text-center">Affichage par catégorie</h4>
+<h4 class="text-center">Filtrage par catégorie</h4>
 
 <div class="row m-auto">
 
   <div class="col-6">
-    <button class="btn same-width" [ngClass]="{'btn-success': this.filtersSelected[0] == false,
-                                   'btn-danger': this.filtersSelected[0] == true}"
+    <button mat-raised-button matTooltip="Études" class="btn same-width" [ngClass]="{'vert': this.filtersSelected[0] == false,
+                                   'vert-estompe': this.filtersSelected[0] == true}"
             (click)="setSortingTerm('Cours'); setFilters(0)">
       Cours
     </button>
   </div>
 
   <div class="col-6">
-    <button class="btn same-width" [ngClass]="{'btn-success': this.filtersSelected[1] == false,
-                                   'btn-danger': this.filtersSelected[1] == true}"
+    <button mat-raised-button matTooltip="Révision, exercice..." class="btn same-width" [ngClass]="{'bleu': this.filtersSelected[1] == false,
+                                   'bleu-estompe': this.filtersSelected[1] == true}"
             (click)="setSortingTerm('Révision'); setFilters(1)">
       Révision
     </button>
@@ -23,16 +23,16 @@
   <div class=" col-12 divider"></div>
 
   <div class="col-6">
-    <button class="btn same-width" [ngClass]="{'btn-success': this.filtersSelected[2] == false,
-                                   'btn-danger': this.filtersSelected[2] == true}"
+    <button mat-raised-button matTooltip="Loisirs, détente..." class="btn same-width" [ngClass]="{'orange': this.filtersSelected[2] == false,
+                                   'orange-estompe': this.filtersSelected[2] == true}"
             (click)="setSortingTerm('Temps Libre'); setFilters(2)">
       Temps Libre
     </button>
   </div>
 
   <div class="col-6">
-    <button class="btn same-width" [ngClass]="{'btn-success': this.filtersSelected[3] == false,
-                                   'btn-danger': this.filtersSelected[3] == true}"
+    <button mat-raised-button matTooltip="Visite médicale, rendez-vous..." class="btn same-width" [ngClass]="{'violet': this.filtersSelected[3] == false,
+                                   'violet-estompe': this.filtersSelected[3] == true}"
             (click)="setSortingTerm('Divers'); setFilters(3)">
       Divers
     </button>

@@ -10,14 +10,18 @@
 .topmargin {
   margin-top: 64px;
 }
-.sticky {
-  position: fixed;
-  z-index: 1000;
-}
 .automargin {
   margin: auto !important;
 }
 .topbotmargin {
   margin-top: 6px;
   margin-bottom: 6px;
+}
+.hachures {
+  background: repeating-linear-gradient(
+    -45deg,
+    #AAA,
+    #AAA 2px,
+    transparent 2px,
+    transparent 12px)
 }
