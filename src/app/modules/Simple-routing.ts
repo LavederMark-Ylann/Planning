@@ -6,7 +6,7 @@ import {AjoutActiviteComponent} from '../ajout-activite/ajout-activite.component
 import {FiltresActivitesComponent} from '../filtres-activites/filtres-activites.component';
 import {ConnexionComponent} from '../connexion/connexion.component';
 import {AuthGuard} from '../services/authguard.service';
-import {ConfigurationComponent} from '../configuration/configuration.component';
+import {ConfigurationComponent} from '../parametres/configuration.component';
 import {LoggedInGuardService} from '../services/loggedInGuard.service';
 
 const routes: Routes = [

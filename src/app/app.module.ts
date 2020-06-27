@@ -42,7 +42,7 @@ import {MatTooltipModule} from '@angular/material/tooltip';
 import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 import { UploadFichierComponent } from './upload-fichier/upload-fichier.component';
 import {UploadService} from './services/upload.service';
-import { ConfigurationComponent } from './configuration/configuration.component';
+import { ConfigurationComponent } from './parametres/configuration.component';
 import {LoggedInGuardService} from './services/loggedInGuard.service';
 
 firebase.initializeApp(environment.firebase);
