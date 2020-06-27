@@ -1,7 +1,7 @@
 import {Subject} from 'rxjs';
 import {Injectable} from '@angular/core';
 import {endOfDay, setHours, setMinutes, startOfDay} from 'date-fns';
-import {CustomEvents} from '../modules/CustomEvents';
+import {CustomEvents} from '../misc/CustomEvents';
 import {HttpClient} from '@angular/common/http';
 import * as firebase from 'firebase';
 import {MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition} from '@angular/material/snack-bar';

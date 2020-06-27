@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {CalendarService} from '../services/calendar.service';
 import {Subscription} from 'rxjs';
-import {CustomEvents} from '../modules/CustomEvents';
+import {CustomEvents} from '../misc/CustomEvents';
 
 @Component({
   selector: 'app-liste-activites',

@@ -12,7 +12,7 @@ import {
 } from 'angular-calendar';
 import {CustomDateFormatter} from './custom-date-formatter.provider';
 import {CalendarService} from '../services/calendar.service';
-import {CustomEvents} from '../modules/CustomEvents';
+import {CustomEvents} from '../misc/CustomEvents';
 
 @Component({
   selector: 'app-calendrier',

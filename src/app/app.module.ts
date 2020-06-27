@@ -22,12 +22,12 @@ import {HttpClientModule} from '@angular/common/http';
 import { ContextMenuModule } from 'ngx-contextmenu';
 import { ListeActivitesComponent } from './liste-activites/liste-activites.component';
 import { AjoutActiviteComponent } from './ajout-activite/ajout-activite.component';
-import { SimpleRouting } from './modules/Simple-routing';
-import { Serializer } from './modules/Serializer';
+import { SimpleRouting } from './misc/Simple-routing';
+import { Serializer } from './misc/Serializer';
 import {CalendarService} from './services/calendar.service';
 import {ColorPickerModule} from 'ngx-color-picker';
 import { FiltresActivitesComponent } from './filtres-activites/filtres-activites.component';
-import {CapitalizeFirstLetterPipe} from './modules/CapitalizeFirstLetterPipe';
+import {CapitalizeFirstLetterPipe} from './misc/CapitalizeFirstLetterPipe';
 import {MatSnackBar} from '@angular/material/snack-bar';
 
 import { AngularFireModule } from '@angular/fire';
