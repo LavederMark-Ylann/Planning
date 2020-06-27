@@ -48,36 +48,6 @@
         </label>
       </div>
 
-      <div class="form-group">
-        <label>Année
-          <select name="annee" class="form-control" ngModel required #annee>
-            <option value="1">A1</option>
-            <option value="2">A2</option>
-          </select>
-        </label>
-
-        <label [ngClass]="annee.value ? '' : 'd-none'">Groupe
-          <select name="groupe" class="form-control" ngModel required #groupe>
-            <option hidden selected disabled></option>
-            <option *ngIf="annee.value === '1'">S</option>
-            <option *ngIf="annee.value === '1'">C</option>
-            <option *ngIf="annee.value === '2'">G</option>
-            <option *ngIf="annee.value === '2'">Q</option>
-          </select>
-        </label>
-
-        <label [ngClass]="groupe.value ? '' : 'd-none'">Classe
-          <select name="classe" class="form-control" ngModel required>
-            <option>1</option>
-            <option>2</option>
-            <option>3</option>
-            <option>4</option>
-            <option>5</option>
-            <option>6</option>
-          </select>
-        </label>
-
-      </div>
       <br>
       <div class="form-group">
         <button class="btn btn-primary" [disabled]="form.invalid && pw1 !== pw2">S'inscrire</button>

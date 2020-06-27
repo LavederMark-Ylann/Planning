@@ -23,6 +23,11 @@
           <mat-icon mat-list-icon class="material-icons">sort</mat-icon>
         </mat-list-item>
       </a>
+      <a [routerLink]="[{ outlets: { side: ['settings'] } }]">
+        <mat-list-item (click)="checkOpened('settings')">
+          <mat-icon mat-list-icon class="material-icons">settings</mat-icon>
+        </mat-list-item>
+      </a>
     </mat-nav-list>
       <div class="routeur-interface" *ngIf="isExpanded" >
     <router-outlet name="side"></router-outlet>

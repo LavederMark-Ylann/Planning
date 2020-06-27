@@ -4,6 +4,9 @@ import {endOfDay, setHours, setMinutes, startOfDay} from 'date-fns';
 import {CustomEvents} from '../modules/CustomEvents';
 import {HttpClient} from '@angular/common/http';
 import * as firebase from 'firebase';
+import {MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition} from '@angular/material/snack-bar';
+import * as ical2json from 'ical2json';
+import iCalDateParser from 'ical-date-parser';
 
 enum Category {
   Divers = 'Divers',
@@ -36,7 +39,7 @@ export class CalendarService {
   filtersSelected = [false, false, false, false];
   filtersSelectedSubject = new Subject<any[]>();
 
-  events: CustomEvents[] = []; // Tous les évènements
+  events: CustomEvents[]; // Tous les évènements
 
   filterTerms: string[];
   filterTermsSubject = new Subject<any[]>();
@@ -49,11 +52,13 @@ export class CalendarService {
     action: string;
     event: CustomEvents;
   };
+  snack: MatSnackBar;
 
-  constructor(private httpClient: HttpClient) {
+  constructor(private httpClient: HttpClient, snack: MatSnackBar) {
     this.events = [];
-    // this.getCours();
+    this.snack = snack;
     this.getEventsPerso();
+    this.getCours();
   }
 
   emitTermsSubject() {
@@ -218,7 +223,6 @@ export class CalendarService {
       if (u) {
         firebase.database().ref('PlanningPerso').child(u.uid).once('value').then((snapshot) => {
           snapshot.forEach((item) => {
-            console.log('get');
             this.events.push(this.newEvent(item.val()));
           });
           this.sortEvents([]);
@@ -229,28 +233,43 @@ export class CalendarService {
   }
 
   getCours() {
-    firebase.auth().onAuthStateChanged((u) => {
-      if (u) {
-        firebase.database().ref('Cours').once('value').then((snapshot) => {
-          snapshot.forEach((item) => {
-            this.events.push(this.newEvent(item.val()));
-          });
-          this.sortEvents([]);
-          this.ref.next();
-        });
-      }
-    });
+    const url = './assets/uploads/' + sessionStorage.getItem('user') + '.ics';
+    this.httpClient.get(url, { responseType: 'text' })
+      .subscribe(d => {
+        const jsonizedICal = ical2json.convert(d);
+        for (const event of jsonizedICal.VCALENDAR[0].VEVENT) {
+          if (event['DTSTART;TZID=Europe/Paris'] && !event.DTSTART) {
+            event.DTSTART = event['DTSTART;TZID=Europe/Paris'] + 'Z';
+            event.DTEND = event['DTEND;TZID=Europe/Paris'] + 'Z';
+          }
+          this.events.push(this.newEvent(
+            {
+              identifiant: Math.max(Math.max.apply(Math, this.events.map((o) => o.identifiant + 1)), 0),
+              title: event.SUMMARY,
+              color: colors.blue,
+              start: new Date(iCalDateParser(event.DTSTART)),
+              end: new Date(iCalDateParser(event.DTEND)),
+              category: Category.Cours,
+            }
+          ));
+        }
+        this.ref.next();
+      },
+        () => this.snack.open('Il semble que vous n\'ayez pas de iCal enregistré. Vous pouvez en enregistrer un dans les paramètres disponibles dans le menu latéral', 'X',
+          {
+            panelClass: 'bg-warning',
+            horizontalPosition: 'center',
+            verticalPosition: 'bottom',
+            duration: 0
+          }));
   }
 
   saveEvents() {
     const toSave = this.sortDataToSend([Category.Revision, Category.TempsLibre, Category.Divers]);
     // On envoie tout sauf les cours
     firebase.auth().onAuthStateChanged((u) => {
-      console.log(u.uid);
       if (u) {
         firebase.database().ref('PlanningPerso').child(u.uid).set(toSave).then(() => {
-          // Snackbar
-          console.log('Sauvegardé!');
         });
       }
     });
@@ -276,6 +295,19 @@ export class CalendarService {
       );
     }
     return ret;
+  }
+
+  snackbar(message: string, hPos: MatSnackBarHorizontalPosition, vPos: MatSnackBarVerticalPosition, classe?: string) {
+    this.snack.open(message, 'X', {
+      panelClass: classe,
+      duration: 1500,
+      horizontalPosition: hPos,
+      verticalPosition: vPos,
+    });
+  }
+
+  snackSave() {
+
   }
 
   saveCours() {

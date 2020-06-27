@@ -13,9 +13,11 @@ export class AjoutActiviteComponent implements OnInit {
 
   constructor(private calendarService: CalendarService, private bar: MatSnackBar) { }
 
-  public color = '#2889e9'; // couleur de base du color picker
+  public color = '#21CF2B'; // couleur de base du color picker
 
   math = Math; // Fonctions de calcul pour le front
+
+  colors = {revision: '#3286C8', tempsLibre: '#992FF1', divers: '#F99122'};
 
   ngOnInit(): void {
   }
@@ -35,6 +37,14 @@ export class AjoutActiviteComponent implements OnInit {
         ('0' + Math.min(255, Math.max(0, parseInt(color, 16) + 50))
           .toString(16)).substr(-2));
     return {primary: couleur, secondary: sec.toUpperCase()};
+  }
+
+  changeColor(category) {
+    switch (category) {
+      case 'Révision': this.color = this.colors.revision; break;
+      case 'Temps libre': this.color =  this.colors.tempsLibre; break;
+      case 'Divers': this.color =  this.colors.divers; break;
+    }
   }
 
   snackbar() {

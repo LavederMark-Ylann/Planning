@@ -1,0 +1,9 @@
+<div class="form-group">
+  <br>
+  <input type="file" class="form-control-file"
+         name="avatar"
+         accept="text/calendar"
+         (change)="getFile($event)">
+  <br>
+  <button class="btn btn-light" (click)="upload()" [disabled]="fichier === null">Valider</button>
+</div>

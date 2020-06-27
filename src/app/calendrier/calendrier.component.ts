@@ -1,8 +1,8 @@
 import {ChangeDetectionStrategy, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {ContextMenuComponent} from 'ngx-contextmenu';
 
-import {isSameDay, isSameMonth, } from 'date-fns';
-import {Subscription} from 'rxjs';
+import {isSameDay, isSameMonth} from 'date-fns';
+import {interval, Subscription} from 'rxjs';
 import {
   CalendarDateFormatter,
   CalendarEvent,
@@ -13,7 +13,6 @@ import {
 import {CustomDateFormatter} from './custom-date-formatter.provider';
 import {CalendarService} from '../services/calendar.service';
 import {CustomEvents} from '../modules/CustomEvents';
-import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-calendrier',
@@ -53,18 +52,33 @@ export class CalendrierComponent implements OnInit, OnDestroy {
 
   activeDayIsOpen = false;
 
+  autoSave: Subscription; // déclencheur de sauvegarde automatique
+
+  visible: boolean;
+
   ngOnInit() {
     this.eventsSub = this.calendarService.eventsSubject.subscribe(
       (filteredEvents: any[]) => {
         this.events = filteredEvents;
       }
     );
+    const source = interval(30000);
+    this.autoSave = source.subscribe(() => {
+      this.calendarService.saveEvents();
+      this.visible = true;
+      this.refresh.next();
+      setTimeout(() => {
+        this.visible = false;
+        this.refresh.next();
+      }, 2500);
+    });
+    // Sauvegarde toutes les 30 secondes
   }
 
-  constructor(private calendarService: CalendarService, private bar: MatSnackBar) {
+  constructor(private calendarService: CalendarService) {
   }
 
-  dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }): void {
+  dayClicked({date, events}: { date: Date; events: CalendarEvent[] }): void {
     if (isSameMonth(date, this.viewDate)) {
       this.activeDayIsOpen = !((isSameDay(this.viewDate, date) && this.activeDayIsOpen === true) ||
         events.length === 0);
@@ -77,7 +91,7 @@ export class CalendrierComponent implements OnInit, OnDestroy {
                       newStart,
                       newEnd,
                     }: CalendarEventTimesChangedEvent): void {
-    this.calendarService.eventTimesChanged({ event, newStart, newEnd});
+    this.calendarService.eventTimesChanged({event, newStart, newEnd});
   }
 
   handleEvent(action: string, event): void {
@@ -94,9 +108,8 @@ export class CalendrierComponent implements OnInit, OnDestroy {
 
   deleteEvent(eventToDelete) {
     if (!eventToDelete.event.draggable) {
-      this.snackbar('Impossible de modifier un cours', 'bg-danger');
-    }
-    else {
+      this.calendarService.snackbar('Impossible de supprimer un cours', 'end', 'top', 'bg-danger');
+    } else {
       this.calendarService.deleteEvent(eventToDelete);
     }
   }
@@ -109,18 +122,8 @@ export class CalendrierComponent implements OnInit, OnDestroy {
     this.activeDayIsOpen = false;
   }
 
-  snackbar(message: string, classe?: string) {
-    this.bar.open(message, 'X', {
-      panelClass: classe,
-      duration: 1500,
-      horizontalPosition: 'end',
-      verticalPosition: 'top',
-    });
-  }
-
   save() {
     this.calendarService.saveEvents();
-    this.snackbar('Sauvegardé !', 'bg-success');
   }
 
   ngOnDestroy() {

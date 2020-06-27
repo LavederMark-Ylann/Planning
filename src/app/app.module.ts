@@ -39,6 +39,11 @@ import * as firebase from 'firebase/app';
 import {AuthService} from './services/auth.service';
 import {AuthGuard} from './services/authguard.service';
 import {MatTooltipModule} from '@angular/material/tooltip';
+import { HashLocationStrategy, LocationStrategy } from '@angular/common';
+import { UploadFichierComponent } from './upload-fichier/upload-fichier.component';
+import {UploadService} from './services/upload.service';
+import { ConfigurationComponent } from './configuration/configuration.component';
+import {LoggedInGuardService} from './services/loggedInGuard.service';
 
 firebase.initializeApp(environment.firebase);
 registerLocaleData(localeFr);
@@ -53,6 +58,8 @@ registerLocaleData(localeFr);
     FiltresActivitesComponent,
     CapitalizeFirstLetterPipe,
     ConnexionComponent,
+    UploadFichierComponent,
+    ConfigurationComponent,
 
   ],
   imports: [
@@ -95,6 +102,9 @@ registerLocaleData(localeFr);
     MatSnackBar,
     AuthService,
     AuthGuard,
+    {provide: LocationStrategy, useClass: HashLocationStrategy},
+    UploadService,
+    LoggedInGuardService
     ],
   bootstrap: [AppComponent]
 })

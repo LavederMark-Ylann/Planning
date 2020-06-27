@@ -3,7 +3,7 @@
     <form (ngSubmit)="onSubmit(formulaire)" #formulaire="ngForm">
       <div class="form-group">
         <label for="nom">
-          Nom :
+          Activité :
         </label>
         <input type="text" id="nom" name="nom" class="form-control" ngModel required>
       </div>
@@ -23,7 +23,7 @@
         <label for="categorie">
           Catégorie :
         </label>
-        <select id="categorie" class="custom-select" name="categorie" ngModel required>
+        <select id="categorie" class="custom-select" name="categorie" ngModel required #categorie (change)="changeColor(categorie.value)">
           <option>
             Révision
           </option>
@@ -40,8 +40,7 @@
           Couleur :
         </label>
         <input type="button" [(colorPicker)]="color" [style.background]="color" cpOutputFormat="hex"
-               cpAlphaChannel="disabled" id="couleur" class="custom-select" name="couleur" ngModel
-               >
+               cpAlphaChannel="disabled" id="couleur" class="custom-select" name="couleur" ngModel>
       </div>
     <button class="btn btn-primary" [disabled]="formulaire.invalid" (click)="snackbar()">Ajouter</button>
     </form>

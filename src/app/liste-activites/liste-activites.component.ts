@@ -2,7 +2,6 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {CalendarService} from '../services/calendar.service';
 import {Subscription} from 'rxjs';
 import {CustomEvents} from '../modules/CustomEvents';
-import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-liste-activites',
@@ -30,7 +29,7 @@ export class ListeActivitesComponent implements OnInit, OnDestroy {
     this.calendarService.emitEventsSubject();
   }
 
-  constructor(private calendarService: CalendarService, private bar: MatSnackBar) {
+  constructor(private calendarService: CalendarService) {
   }
 
   sortEvents() {
@@ -56,11 +55,7 @@ export class ListeActivitesComponent implements OnInit, OnDestroy {
   }
 
   snackbar() {
-    this.bar.open('Activité ajoutée !', 'X', {
-      duration: 1500,
-      horizontalPosition: 'start',
-      verticalPosition: 'bottom',
-    });
+    this.calendarService.snackbar('Activité ajoutée !', 'start', 'bottom', 'bg-success');
   }
 
   ngOnDestroy() {
